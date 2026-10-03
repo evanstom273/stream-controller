@@ -1,0 +1,1 @@
+export type Task={id:string;text:string;done:boolean};export type State={plan:{title:string;subtitle:string;visible:boolean;tasks:Task[]};questionableDecisions:number};export type ObsStatus={connected:boolean;studioMode:boolean;program?:string;preview?:string;scenes:string[];micMuted?:boolean;musicMuted?:boolean;error?:string};
