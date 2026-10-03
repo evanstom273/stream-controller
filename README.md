@@ -1,35 +1,58 @@
 # Silverbullet Stream Controller
 
-Mobile-first OBS remote + animated overlay system.
+A zero-backend, mobile-first OBS remote built with **Vite + React + TypeScript + Tailwind CSS**.
 
-**Stack:** Vite, React, TypeScript, Tailwind CSS, Node/Express, obs-websocket-js.
+The browser connects **directly to OBS WebSocket** using `obs-websocket-js`. No Python script, Node bridge, or helper process is required while streaming.
 
-## Architecture
-Phone/browser → local bridge → OBS WebSocket  
-OBS Browser Source → React overlay → local bridge
+## v0.2
 
-The bridge is intentional: OBS is local software, and a hosted HTTPS page talking directly to a local insecure `ws://` endpoint is fragile in modern browsers. The bridge also keeps the OBS password off the frontend. OBS 28+ already includes obs-websocket; v5 normally uses port 4455.
-
-## v0.1
-- OBS status
-- Studio Mode-aware scene buttons (scene → Preview)
-- Transition button
-- Mic/music mute
-- Stream Plan editor
-- 450px animated Stream Plan overlay
-- persistent global Questionable Decisions counter scaffold
+- direct phone/browser → OBS connection
+- connection address + password stored only in that browser's local storage
+- Studio Mode-aware scene buttons: scenes go to **Preview**
+- big **Transition** button
+- Studio Mode toggle
+- OBS input discovery + selectable mic/music controls
+- Stream Plan editor state
+- global persistent **Questionable Decisions** counter
 - mobile-first UI
 
-## Run
-1. Clone the repo and run `npm install`.
-2. OBS → Tools → WebSocket Server Settings → enable it and keep authentication on.
-3. Run `npm run dev`.
-4. PC controller: `http://localhost:5173`
-5. Phone: `http://YOUR-PC-IP:5173` or your Tailscale IP.
-6. OBS Browser Source: `http://127.0.0.1:5173/overlay`, 1920×1080.
-7. First bridge launch creates `data/config.json`. Add the OBS WebSocket password there. Default audio names are `Mic/Aux` and `Media`.
+## OBS setup
 
-`data/` is gitignored so credentials and live state never go to GitHub.
+OBS 28+ includes obs-websocket.
 
-## Planned
-Settings UI + OBS input dropdowns; generic counters; temporary cards / Currently Doing; animated Questionable Decisions + history; Hardcore world tracker; game profiles; YouTube/Twitch chat; PWA install.
+1. OBS → **Tools → WebSocket Server Settings**
+2. Enable WebSocket server.
+3. Keep authentication enabled and copy the password.
+4. Default port is **4455**.
+5. On the controller, enter the streaming PC's LAN/Tailscale address, for example:
+   `ws://192.168.1.123:4455`
+6. Enter the OBS WebSocket password and connect.
+
+## Development
+
+```bash
+npm install
+npm run dev
+```
+
+Open the Vite URL from your phone using the PC's LAN IP while developing.
+
+## Hosting
+
+The frontend is fully static and can be deployed to GitHub Pages/Vercel/etc. One browser caveat: a page served over HTTPS may refuse an insecure `ws://` connection. If that happens on the target browser, use a secure `wss://` endpoint or serve the controller over HTTP on the trusted LAN. This is a browser security restriction, not an OBS limitation.
+
+## Security
+
+The OBS password is **never committed to this repository**. It is stored locally in the browser that you use to control OBS. Keep OBS WebSocket authentication enabled.
+
+## Next
+
+The old Stream Plan overlay needs a new cross-browser state transport now that the backend has deliberately been removed. Planned after that:
+
+- PWA/installable phone UI
+- generic counters + animated OBS cards
+- Questionable Decisions animation/history
+- temporary lower-thirds / Currently Doing
+- Hardcore world tracker
+- game profiles
+- YouTube/Twitch chat
